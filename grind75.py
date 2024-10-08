@@ -12,6 +12,8 @@ class LC1:
 
 
 
+
+
 # 20. Valid Parentheses
 class LC20:
     def isValid(self, s: str) -> bool:
@@ -27,6 +29,11 @@ class LC20:
                 stack.append(c)
 
         return len(stack) == 0
+
+
+
+
+
 
 
 # 21. Merge Two Sorted Lists
@@ -65,6 +72,10 @@ class LC21:
 
 
 
+
+
+
+
 # 121. Best Time to Buy and Sell Stock
 class LC121:
     def maxProfit(self, prices: List[int]) -> int:
@@ -79,11 +90,19 @@ class LC121:
 
 
 
+
+
+
 # 125. Valid Palindrome
 class LC125:
     def isPalindrome(self, s: str) -> bool:
         # not a readable solution, just a fun one
         return  (t := [c.lower() for c in s if c.isalnum()]) == t[::-1]
+
+
+
+
+
 
 
 # 226. Invert Binary Tree
@@ -110,6 +129,9 @@ class LC226:
 
 
 
+
+
+
 # 242. Valid Anagram
 class LC242:
     def isAnagram(self, s: str, t: str) -> bool:
@@ -127,6 +149,8 @@ class LC242:
 
 
 
+
+
 # 704. Binary Search
 class LC704:
     def recursive_search(self, left, right, nums, target): 
@@ -140,6 +164,10 @@ class LC704:
         
     def search(self, nums: List[int], target: int) -> int:
         return self.recursive_search(0, len(nums) - 1, nums, target)
+
+
+
+
 
 
 # 733. Flood Fill
@@ -165,7 +193,353 @@ class LC733:
         dfs(sr, sc)
         return image
         
+ 
+
+
+
+
+# 235. Lowest Common Ancestor of a Binary Search Tree
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+class LC235:
+    def lowestCommonAncestor(self, root: 'TreeNode', p: 'TreeNode', q: 'TreeNode') -> 'TreeNode':
+        p_ancestors = set()
+        q_ancestors = set()
+
+        def recursiveLCA(node, depth = 0): 
+            if not node: return
+
+            a = recursiveLCA(node.left, depth + 1)
+            b = recursiveLCA(node.right, depth + 1)
+            if a: 
+                return a
+            if b: 
+                return b
+
+            ancestor_is_P = node.left in p_ancestors or node.right in p_ancestors or node == p
+            ancestor_is_Q = node.left in q_ancestors or node.right in q_ancestors or node == q
+
+            if ancestor_is_P: 
+                p_ancestors.add(node)
+            if ancestor_is_Q:
+                q_ancestors.add(node)
+            
+            if ancestor_is_P and ancestor_is_Q: 
+                return node
+
+        return recursiveLCA(root)
+
+
+
+
+
+
+
+# 110. Balanced Binary Tree
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class LC110:
+    def isBalanced(self, root: Optional[TreeNode]) -> bool:
+        def recIsBalanced(node):
+            if not node: return 0, True
+
+            l_depth, isLeftBalanced = recIsBalanced(node.left)
+            r_depth, isRightBalanced = recIsBalanced(node.right)
+
+            isBalanced = (l_depth - r_depth)**2 <= 1
+
+            return max(l_depth, r_depth) + 1, isLeftBalanced and isRightBalanced and isBalanced
+
+        return recIsBalanced(root)[1]
+    
+
+
+
+
+
+
+
+# 141. Linked List Cycle
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.next = None
+class LC141:
+    def hasCycle(self, head: Optional[ListNode]) -> bool:
+        seen = set()
+
+        while head:
+            if head in seen: 
+                return True
+            seen.add(head)
+            head = head.next 
+        return False
+
+
+
+
+
+
+
+# 232. Implement Queue using Stacks
+class LC232:
+    def __init__(self):
+        self.pushing_stack = []
+        self.popping_stack = []
+        
+
+    def push(self, x: int) -> None:
+        self.pushing_stack.append(x)
+
+    def pop(self) -> int:
+        self.peek()
+        return self.popping_stack.pop()
+        
+
+    def peek(self) -> int:
+        if not self.popping_stack: 
+            while self.pushing_stack: 
+                self.popping_stack.append(self.pushing_stack.pop())
+        return self.popping_stack[-1]
+        
+
+    def empty(self) -> bool:
+        return not self.pushing_stack and not self.popping_stack
+
+# Your MyQueue object will be instantiated and called as such:
+# obj = MyQueue()
+# obj.push(x)
+# param_2 = obj.pop()
+# param_3 = obj.peek()
+# param_4 = obj.empty()
+
+
+
+
+
+
+
+
+        
+# 278. First Bad Version          
+# The isBadVersion API is already defined for you.
+# def isBadVersion(version: int) -> bool:
+class LC278:
+    def firstBadVersion(self, n: int) -> int:
+        def bin_search(left = 1, right = n): 
+            if left == right: 
+                return left
+
+            mid = (left + right)//2
+            if isBadVersion(mid): return bin_search(left, mid)
+            else: return bin_search(mid + 1, right)
+
+        return bin_search()
+
+
+
+
+
+
+
+
+# 383. Ransom Note
+class LC383:
+    def canConstruct(self, ransomNote: str, magazine: str) -> bool:
+        table = {}
+        for letter in magazine: 
+            table.setdefault(letter, 0)
+            table[letter] += 1
+        
+        for letter in ransomNote: 
+            if letter not in table: return False
+            if table[letter] == 0: return False
+            table[letter] -= 1
+        return True
+
+            
+
+
+
+
+
+# 70. Climbing Stairs
+class LC70:
+    def climbStairs(self, n: int) -> int:
+        if n == 1: return 1
+        if n == 2: return 2
+        
+        dp = [0]*(n+1)
+        dp[0] = 1
+        dp[1] = 1
+        dp[2] = 2
+        for i in range(2, n+1): 
+            dp[i] = dp[i-1] + dp[i-2]
+        return dp[n]
+        
+
+
+
+
+
+# 409. Longest Palindrome
+class LC409:
+    def longestPalindrome(self, s: str) -> int:
+        table = {}
+        for c in s: 
+            table.setdefault(c, 0)
+            table[c] += 1
+
+        res = 0
+        odds = [val - 1 for val in table.values() if val % 2 == 1]
+        evens = [val for val in table.values() if val % 2 == 0]
+        if odds: res += 1
+
+        res += sum(evens)
+        res += sum(odds)
+        return res
+      
+
+
+
+
+
+
+
+
+# 206. Reverse Linked List
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class LC206:
+    def reverseList(self, head: Optional[ListNode]) -> Optional[ListNode]:
+
+        def rec_rev(prev, node): 
+
+            if not node:
+                return prev 
+
+            tail = rec_rev(node, node.next)
+            node.next = prev
+            return tail
+            
+        return rec_rev(None, head)
+
+
+
+
+
+
+
+# 169. Majority Element
+class LC169:
+    def majorityElement(self, nums: List[int]) -> int:
+        candidate = None
+        count = 0
+
+        for num in nums:
+            if count == 0: 
+                candidate = num
+            if num == candidate:
+                count += 1
+            else: 
+                count -= 1
+
+        return candidate
+        
+
+    
+
+
+
+
+
+
+# 67. Add Binary
+class LC67:
+    def addBinary(self, a: str, b: str) -> str:
+        a, b = list(a), list(b)
+        n = max(len(a), len(b))
+        a = (n - len(a))*["0"] + a
+        b = (n - len(b))*["0"] + b
+
+        def xor(x, y, c): 
+            if x == "1" and y == "1": 
+                return "1" if c else "0", True
+            if  x == "0" and y == "0": 
+                return "1" if c else "0", False
+            return "0" if c else "1", c
+
+        carry = False
+        res = ""
+        while a and b: 
+            t, nextcarry = xor(a.pop(), b.pop(), carry)
+            res = t + res
+            carry = nextcarry
+
+        return ("1" if carry else "") + res
+
+
+
+
+
+
+
+
+# 543. Diameter of Binary Tree
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class LC543:
+    def diameterOfBinaryTree(self, root: Optional[TreeNode]) -> int:
+
+        def depth(node): 
+            if not node: return 0, 0
+            depth_l, diam_l = depth(node.left)
+            depth_r, diam_r = depth(node.right)
+
+            return max(depth_l, depth_r) + 1, max(diam_l, diam_r, depth_l + depth_r)
+
+        return depth(root)[1]
+
+
+
+
+
+
+
+# 876. Middle of the Linked List
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class LC876:
+    def middleNode(self, head: Optional[ListNode]) -> Optional[ListNode]:
+        hare = head
+
+        while hare and hare.next: 
+            hare = hare.next.next
+            head = head.next
+        return head
         
         
-                
+
+
+        
+
         
